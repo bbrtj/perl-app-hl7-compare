@@ -1,0 +1,34 @@
+=head1 NAME
+
+App::HL7::Compare - compare two HL7 messages against one another
+
+=head1 SYNOPSIS
+
+	use App::HL7::Compare;
+
+	App::HL7::Compare->new(
+		files => [
+			'file1.hl7',
+			'file2.hl7',
+		],
+	)->print;
+
+=head1 DESCRIPTION
+
+TODO
+
+=head1 SEE ALSO
+
+L<App::HL7::Dump>
+
+=head1 AUTHOR
+
+Bartosz Jarzyna E<lt>bbrtj.pro@gmail.comE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2023 by Bartosz Jarzyna
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
