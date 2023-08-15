@@ -10,9 +10,9 @@ use App::HL7::Compare::Parser::Message;
 
 sub parse
 {
-	my ($self, $input) = @_;
+	my ($self, $input, %opts) = @_;
 
-	return App::HL7::Compare::Parser::Message->new(input => $input);
+	return App::HL7::Compare::Parser::Message->new(%opts, input => $input);
 }
 
 1;

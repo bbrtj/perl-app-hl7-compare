@@ -6,7 +6,7 @@ use warnings;
 
 use Moo;
 use Mooish::AttributeBuilder -standard;
-use Types::Standard qw(Str);
+use Types::Standard qw(Bool);
 
 use App::HL7::Compare::Parser::Segment;
 
@@ -20,6 +20,11 @@ sub part_separator
 	return $sep;
 }
 
+has param 'skip_MSH' => (
+	isa => Bool,
+	default => sub { 1 },
+);
+
 with qw(
 	App::HL7::Compare::Parser::Role::Partible
 	App::HL7::Compare::Parser::Role::RequiresInput
@@ -29,7 +34,11 @@ sub _build_parts
 {
 	my ($self) = @_;
 
-	return $self->split_and_build($self->consume_input, 'App::HL7::Compare::Parser::Segment');
+	my $parts = $self->split_and_build($self->consume_input, 'App::HL7::Compare::Parser::Segment');
+	@{$parts} = grep { $_->name ne 'MSH' } @{$parts}
+		if $self->skip_MSH;
+
+	return $parts;
 }
 
 1;

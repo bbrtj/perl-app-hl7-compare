@@ -14,9 +14,18 @@ my $contents = do {
 };
 
 my $parser = App::HL7::Compare::Parser->new;
-my $parsed = $parser->parse($contents);
 
-is $parsed->parts->[0]->name, 'MSH', 'parsed file seems ok';
+subtest 'first segment name with skipped MSH' => sub {
+	my $parsed = $parser->parse($contents, skip_MSH => 0);
+
+	is $parsed->parts->[0]->name, 'MSH', 'parsed file seems ok';
+};
+
+subtest 'first segment name' => sub {
+	my $parsed = $parser->parse($contents);
+
+	is $parsed->parts->[0]->name, 'PID', 'parsed file seems ok';
+};
 
 done_testing;
 
