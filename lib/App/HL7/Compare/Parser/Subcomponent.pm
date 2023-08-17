@@ -1,4 +1,4 @@
-package App::HL7::Compare::Parser::CellSubpart;
+package App::HL7::Compare::Parser::Subcomponent;
 
 use v5.10;
 use strict;
@@ -14,7 +14,7 @@ has field 'value' => (
 );
 
 with qw(
-	App::HL7::Compare::Parser::Role::Subpart
+	App::HL7::Compare::Parser::Role::Part
 	App::HL7::Compare::Parser::Role::RequiresInput
 	App::HL7::Compare::Parser::Role::Stringifies
 );

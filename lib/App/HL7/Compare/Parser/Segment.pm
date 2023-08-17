@@ -8,17 +8,7 @@ use Moo;
 use Mooish::AttributeBuilder -standard;
 use Types::Standard qw(Str);
 
-use App::HL7::Compare::Parser::Cell;
-
-my $sep = '|';
-
-sub part_separator
-{
-	$sep = pop
-		if @_ == 2;
-
-	return $sep;
-}
+use App::HL7::Compare::Parser::Field;
 
 has field 'name' => (
 	isa => Str,
@@ -28,14 +18,21 @@ has field 'name' => (
 with qw(
 	App::HL7::Compare::Parser::Role::Partible
 	App::HL7::Compare::Parser::Role::RequiresInput
-	App::HL7::Compare::Parser::Role::Subpart
+	App::HL7::Compare::Parser::Role::Part
 );
+
+sub part_separator
+{
+	my ($self) = @_;
+
+	return $self->msg_config->field_separator;
+}
 
 sub _build_parts
 {
 	my ($self) = @_;
 
-	return $self->split_and_build($self->consume_input, 'App::HL7::Compare::Parser::Cell');
+	return $self->split_and_build($self->consume_input, 'App::HL7::Compare::Parser::Field');
 }
 
 sub _build_name

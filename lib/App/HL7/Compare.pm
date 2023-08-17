@@ -8,6 +8,7 @@ use Moo;
 use Mooish::AttributeBuilder -standard;
 use App::HL7::Compare::Parser;
 use Types::Standard qw(Tuple Str);
+use List::Util qw(max);
 
 has param 'files' => (
 	isa => Tuple[Str, Str],
@@ -16,6 +17,16 @@ has param 'files' => (
 sub _compare_messages
 {
 	my ($self, $message1, $message2) = @_;
+
+	my ($ind1, $total1) = (0, $message1->total_parts);
+	my ($ind2, $total2) = (0, $message2->total_parts);
+
+	while ($ind1 < $total1 && $ind2 < $total2) {
+	}
+}
+
+sub print
+{
 }
 
 1;

@@ -9,16 +9,7 @@ use Mooish::AttributeBuilder -standard;
 use Types::Standard qw(Bool);
 
 use App::HL7::Compare::Parser::Segment;
-
-my $sep = "\n";
-
-sub part_separator
-{
-	$sep = pop
-		if @_ == 2;
-
-	return $sep;
-}
+use App::HL7::Compare::Parser::MessageConfig;
 
 has param 'skip_MSH' => (
 	isa => Bool,
@@ -26,19 +17,37 @@ has param 'skip_MSH' => (
 );
 
 with qw(
+	App::HL7::Compare::Parser::Role::PartOfMessage
 	App::HL7::Compare::Parser::Role::Partible
 	App::HL7::Compare::Parser::Role::RequiresInput
 );
+
+sub part_separator
+{
+	my ($self) = @_;
+
+	return $self->msg_config->segment_separator;
+}
 
 sub _build_parts
 {
 	my ($self) = @_;
 
-	my $parts = $self->split_and_build($self->consume_input, 'App::HL7::Compare::Parser::Segment');
+	my $input = $self->consume_input;
+	$self->msg_config->from_MSH($input);
+
+	my $parts = $self->split_and_build($input, 'App::HL7::Compare::Parser::Segment');
 	@{$parts} = grep { $_->name ne 'MSH' } @{$parts}
 		if $self->skip_MSH;
 
 	return $parts;
+}
+
+sub _build_msg_config
+{
+	my ($self) = @_;
+
+	return App::HL7::Compare::Parser::MessageConfig->new;
 }
 
 1;

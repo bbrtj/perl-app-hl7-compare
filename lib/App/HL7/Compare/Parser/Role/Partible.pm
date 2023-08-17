@@ -11,12 +11,13 @@ use App::HL7::Compare::Exception;
 use Moo::Role;
 
 has field 'parts' => (
-	isa => ArrayRef[ConsumerOf['App::HL7::Compare::Parser::Role::Subpart']],
+	isa => ArrayRef[ConsumerOf['App::HL7::Compare::Parser::Role::Part']],
 	lazy => 1,
 );
 
 with qw(
 	App::HL7::Compare::Parser::Role::Stringifies
+	App::HL7::Compare::Parser::Role::PartOfMessage
 );
 
 requires qw(
@@ -36,6 +37,13 @@ sub part_with_number
 	my ($self, $num) = @_;
 
 	return first { $num == $_->number } @{$self->parts};
+}
+
+sub total_parts
+{
+	my ($self) = @_;
+
+	return scalar @{$self->parts};
 }
 
 sub to_string
@@ -59,7 +67,11 @@ sub split_and_build
 
 	return [
 		map {
-			$class_to_build->new(number => $_ + 1, input => $parts[$_])
+			$class_to_build->new(
+				msg_config => $self->msg_config,
+				number => $_ + 1,
+				input => $parts[$_],
+			)
 		} grep {
 			length $parts[$_] > 0
 		} 0 .. $#parts
