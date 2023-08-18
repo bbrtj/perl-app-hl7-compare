@@ -11,7 +11,7 @@ use App::HL7::Compare::Exception;
 use Moo::Role;
 
 has field 'parts' => (
-	isa => ArrayRef[ConsumerOf['App::HL7::Compare::Parser::Role::Part']],
+	isa => ArrayRef [ConsumerOf ['App::HL7::Compare::Parser::Role::Part']],
 	lazy => 1,
 );
 

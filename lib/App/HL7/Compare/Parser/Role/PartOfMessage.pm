@@ -10,7 +10,7 @@ use Carp qw(croak);
 use Moo::Role;
 
 has param 'msg_config' => (
-	isa => InstanceOf['App::HL7::Compare::Parser::MessageConfig'],
+	isa => InstanceOf ['App::HL7::Compare::Parser::MessageConfig'],
 	builder => '_build_msg_config_or_error',
 );
 
