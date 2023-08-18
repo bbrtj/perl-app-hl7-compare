@@ -56,11 +56,20 @@ sub to_string
 	return join $self->part_separator, map { $_->to_string } @{$parts};
 }
 
+sub _trimmed
+{
+	my ($self, $value) = @_;
+
+	$value =~ s/\A\s+//;
+	$value =~ s/\s+\z//;
+	return $value;
+}
+
 sub split_and_build
 {
 	my ($self, $string_to_split, $class_to_build) = @_;
 
-	my @parts = split quotemeta($self->part_separator), $string_to_split;
+	my @parts = map { $self->_trimmed($_) } split quotemeta($self->part_separator), $string_to_split;
 
 	App::HL7::Compare::Exception->raise("empty value for $class_to_build")
 		if @parts == 0;

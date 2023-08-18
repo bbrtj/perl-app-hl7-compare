@@ -23,7 +23,8 @@ sub _compare_line
 {
 	my ($self, $segment, $field, $component, $subcomponent, $message_num, $comps) = @_;
 
-	my $order = $comps->{order}{$segment->name} //= @{$comps->{segments}};
+	my $name = sprintf "%s.%s", $segment->name, $segment->number;
+	my $order = $comps->{order}{$name} //= @{$comps->{segments}};
 	$comps->{segments}[$order]
 		[$field->number][$component->number][$subcomponent->number]
 		[$message_num] = $subcomponent->value;
@@ -171,7 +172,7 @@ sub compare_stringify
 			push @out, sprintf "%s%s: %s => %s",
 				$segment->{segment},
 				join('', map { "[$_]" } @{$comp->{path}}),
-				map { defined ? $_ : '(empty)' } @{$comp->{value}},;
+				map { defined ? $_ : '(empty)' } @{$comp->{value}};
 		}
 	}
 

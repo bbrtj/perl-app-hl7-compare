@@ -40,6 +40,11 @@ sub _build_parts
 	@{$parts} = grep { $_->name ne 'MSH' } @{$parts}
 		if $self->skip_MSH;
 
+	my %last_seen;
+	foreach my $item (@{$parts}) {
+		$item->set_number(++$last_seen{$item->name});
+	}
+
 	return $parts;
 }
 

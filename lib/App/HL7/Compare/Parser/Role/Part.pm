@@ -10,6 +10,7 @@ use Moo::Role;
 
 has param 'number' => (
 	isa => PositiveInt,
+	writer => 1,
 );
 
 with qw(

@@ -8,17 +8,21 @@ use App::HL7::Compare;
 subtest 'should compare simple messages' => sub {
 	my $comparer = App::HL7::Compare->new(
 		files => [
-			\('MSH|^~\&|test1|test2' . "\n" .
-				'PID|a|b|c|y1&y2^||'),
-			\('MSH|^~\&|test3|test2' . "\n" .
-				'PID|d|e|f|^y3|x'),
+			\(
+				'MSH|^~\&|test1|test2' . "\n" .
+					'PID|a|b|c|y1&y2^||'
+			),
+			\(
+				'MSH|^~\&|test3|test2' . "\n" .
+					'PID|d|e|f|^y3|x'
+			),
 		],
 	);
 	my $comparison = $comparer->compare;
 
 	is_deeply $comparison, [
 		{
-			'segment' => 'PID',
+			'segment' => 'PID.1',
 			'compared' => [
 				{
 					'path' => [1],
@@ -61,14 +65,14 @@ subtest 'should stringify a comparison' => sub {
 	my $comparison = $comparer->compare_stringify;
 	is $comparison, join(
 		"\n",
-		'PID[1][1][1]: y1 => (empty)',
-		'PID[1][1][2]: y2 => (empty)',
-		'PID[1][2]: (empty) => y3',
-		'PID[2]: (empty) => x',
+		'PID.1[1][1][1]: y1 => (empty)',
+		'PID.1[1][1][2]: y2 => (empty)',
+		'PID.1[1][2]: (empty) => y3',
+		'PID.1[2]: (empty) => x',
 		'ORC.1[1]: 1 => 1',
 		'ORC.1[2]: ab => ab',
 		'ORC.2[1]: 2 => 2',
-		'ORC.2[2]: cd => cc',
+		'ORC.2[2]: cc => cd',
 	);
 };
 
