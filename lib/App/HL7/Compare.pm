@@ -172,7 +172,7 @@ sub compare_stringify
 			push @out, sprintf "%s%s: %s => %s",
 				$segment->{segment},
 				join('', map { "[$_]" } @{$comp->{path}}),
-				map { defined ? $_ : '(empty)' } @{$comp->{value}};
+				map { defined $_ ? $_ : '(empty)' } @{$comp->{value}};
 		}
 	}
 
