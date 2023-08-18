@@ -11,6 +11,7 @@ use Moo::Role;
 
 has param 'input' => (
 	isa => Str,
+	writer => -hidden,
 	predicate => -hidden,
 	clearer => -hidden,
 );

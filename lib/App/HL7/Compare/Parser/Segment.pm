@@ -12,7 +12,7 @@ use App::HL7::Compare::Parser::Field;
 
 has field 'name' => (
 	isa => Str,
-	lazy => 1,
+	writer => -hidden,
 );
 
 with qw(
@@ -35,11 +35,14 @@ sub _build_parts
 	return $self->split_and_build($self->consume_input, 'App::HL7::Compare::Parser::Field');
 }
 
-sub _build_name
+sub BUILD
 {
-	my ($self) = @_;
+	my ($self, $args) = @_;
 
-	return $self->parts->[0]->parts->[0]->parts->[0]->value;
+	my $input = $self->consume_input;
+	my ($name, $rest) = split quotemeta($self->part_separator), $input, 2;
+	$self->_set_name($name);
+	$self->_set_input($rest);
 }
 
 1;
