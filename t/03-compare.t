@@ -8,10 +8,10 @@ use App::HL7::Compare;
 subtest 'should compare simple messages' => sub {
 	my $comparer = App::HL7::Compare->new(
 		files => [
-			'MSH|^~\&|test1|test2' . "\n" .
-				'PID|a|b|c|y1&y2^||',
-			'MSH|^~\&|test3|test2' . "\n" .
-				'PID|d|e|f|^y3|x',
+			\('MSH|^~\&|test1|test2' . "\n" .
+				'PID|a|b|c|y1&y2^||'),
+			\('MSH|^~\&|test3|test2' . "\n" .
+				'PID|d|e|f|^y3|x'),
 		],
 	);
 	my $comparison = $comparer->compare;
@@ -55,12 +55,7 @@ subtest 'should compare simple messages' => sub {
 
 subtest 'should stringify a comparison' => sub {
 	my $comparer = App::HL7::Compare->new(
-		files => [
-			'MSH|^~\&' . "\n" .
-				'PID|y1&y2^||',
-			'MSH|^~\&' . "\n" .
-				'PID|^y3|x',
-		],
+		files => ['t/data/test1.hl7', 't/data/test2.hl7'],
 	);
 
 	my $comparison = $comparer->compare_stringify;
@@ -70,6 +65,10 @@ subtest 'should stringify a comparison' => sub {
 		'PID[1][1][2]: y2 => (empty)',
 		'PID[1][2]: (empty) => y3',
 		'PID[2]: (empty) => x',
+		'ORC.1[1]: 1 => 1',
+		'ORC.1[2]: ab => ab',
+		'ORC.2[1]: 2 => 2',
+		'ORC.2[2]: cd => cc',
 	);
 };
 

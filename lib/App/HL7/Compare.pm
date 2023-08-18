@@ -7,11 +7,11 @@ use warnings;
 use Moo;
 use Mooish::AttributeBuilder -standard;
 use App::HL7::Compare::Parser;
-use Types::Standard qw(Tuple Str InstanceOf);
+use Types::Standard qw(Tuple Str ScalarRef InstanceOf);
 use List::Util qw(max);
 
 has param 'files' => (
-	isa => Tuple [Str, Str],
+	isa => Tuple [Str | ScalarRef, Str | ScalarRef],
 );
 
 has field 'parser' => (
@@ -125,12 +125,39 @@ sub _compare_messages
 	return $self->_build_comparison(\%comps);
 }
 
+sub _get_files
+{
+	my ($self) = @_;
+
+	my $slurp = sub {
+		my ($file) = @_;
+
+		open my $fh, '<', $file
+			or die "couldn't open file $file: $!";
+
+		local $/;
+		return readline $fh;
+	};
+
+	my @files = @{$self->files};
+	foreach my $file (@files) {
+		if (ref $file eq 'SCALAR') {
+			$file = ${$file};
+		}
+		else {
+			$file = $slurp->($file);
+		}
+	}
+
+	return @files;
+}
+
 sub compare
 {
 	my ($self) = @_;
 
 	# TODO: load files
-	return $self->_compare_messages(map { $self->parser->parse($_) } @{$self->files});
+	return $self->_compare_messages(map { $self->parser->parse($_) } $self->_get_files);
 }
 
 sub compare_stringify
