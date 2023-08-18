@@ -25,27 +25,6 @@ requires qw(
 	_build_parts
 );
 
-sub has_multiple_parts
-{
-	my ($self) = @_;
-
-	return @{$self->parts} == 1;
-}
-
-sub part_with_number
-{
-	my ($self, $num) = @_;
-
-	return first { $num == $_->number } @{$self->parts};
-}
-
-sub total_parts
-{
-	my ($self) = @_;
-
-	return scalar @{$self->parts};
-}
-
 sub to_string
 {
 	my ($self) = @_;
