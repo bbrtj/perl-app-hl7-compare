@@ -133,8 +133,22 @@ sub compare
 	return $self->_compare_messages(map { $self->parser->parse($_) } @{$self->files});
 }
 
-sub print
+sub compare_stringify
 {
+	my ($self) = @_;
+	my $compared = $self->compare;
+
+	my @out;
+	foreach my $segment (@{$compared}) {
+		foreach my $comp (@{$segment->{compared}}) {
+			push @out, sprintf "%s%s: %s => %s",
+				$segment->{segment},
+				join('', map { "[$_]" } @{$comp->{path}}),
+				map { defined ? $_ : '(empty)' } @{$comp->{value}},;
+		}
+	}
+
+	return join "\n", @out;
 }
 
 1;

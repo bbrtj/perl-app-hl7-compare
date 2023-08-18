@@ -53,5 +53,25 @@ subtest 'should compare simple messages' => sub {
 	];
 };
 
+subtest 'should stringify a comparison' => sub {
+	my $comparer = App::HL7::Compare->new(
+		files => [
+			'MSH|^~\&' . "\n" .
+				'PID|y1&y2^||',
+			'MSH|^~\&' . "\n" .
+				'PID|^y3|x',
+		],
+	);
+
+	my $comparison = $comparer->compare_stringify;
+	is $comparison, join(
+		"\n",
+		'PID[1][1][1]: y1 => (empty)',
+		'PID[1][1][2]: y2 => (empty)',
+		'PID[1][2]: (empty) => y3',
+		'PID[2]: (empty) => x',
+	);
+};
+
 done_testing;
 
