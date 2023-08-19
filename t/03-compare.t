@@ -57,9 +57,10 @@ subtest 'should compare simple messages' => sub {
 	];
 };
 
-subtest 'should stringify a comparison' => sub {
+subtest 'should stringify a comparison (with matching)' => sub {
 	my $comparer = App::HL7::Compare->new(
 		files => ['t/data/test1.hl7', 't/data/test2.hl7'],
+		exclude_matching => 0,
 	);
 
 	my $comparison = $comparer->compare_stringify;
@@ -72,6 +73,22 @@ subtest 'should stringify a comparison' => sub {
 		'ORC.1[1]:       1 => 1',
 		'ORC.1[2]:       ab => ab',
 		'ORC.2[1]:       2 => 2',
+		'ORC.2[2]:       cc => cd',
+	);
+};
+
+subtest 'should stringify a comparison (without matching)' => sub {
+	my $comparer = App::HL7::Compare->new(
+		files => ['t/data/test1.hl7', 't/data/test2.hl7'],
+	);
+
+	my $comparison = $comparer->compare_stringify;
+	is $comparison, join(
+		"\n",
+		'PID.1[1][1][1]: y1 => (empty)',
+		'PID.1[1][1][2]: y2 => (empty)',
+		'PID.1[1][2]:    (empty) => y3',
+		'PID.1[2]:       (empty) => x',
 		'ORC.2[2]:       cc => cd',
 	);
 };

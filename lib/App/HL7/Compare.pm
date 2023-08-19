@@ -7,11 +7,16 @@ use warnings;
 use Moo;
 use Mooish::AttributeBuilder -standard;
 use App::HL7::Compare::Parser;
-use Types::Standard qw(Tuple Str ScalarRef InstanceOf);
+use Types::Standard qw(Tuple Str ScalarRef InstanceOf Bool);
 use List::Util qw(max);
 
 has param 'files' => (
 	isa => Tuple [Str | ScalarRef, Str | ScalarRef],
+);
+
+has param 'exclude_matching' => (
+	isa => Bool,
+	default => sub { 1 },
 );
 
 has field 'parser' => (
@@ -153,12 +158,38 @@ sub _get_files
 	return @files;
 }
 
+sub _remove_matching
+{
+	my ($self, $compared) = @_;
+
+	return unless $self->exclude_matching;
+
+	foreach my $segment (@{$compared}) {
+		my @to_delete;
+
+		foreach my $comp_num (0 .. $#{$segment->{compared}}) {
+			my $comp = $segment->{compared}[$comp_num];
+
+			my @values = @{$comp->{value}};
+			if ((grep { defined } @values) == 2 && $values[0] eq $values[1]) {
+				push @to_delete, $comp_num;
+			}
+		}
+
+		foreach my $comp_num (reverse @to_delete) {
+			splice @{$segment->{compared}}, $comp_num, 1;
+		}
+	}
+}
+
 sub compare
 {
 	my ($self) = @_;
 
-	# TODO: load files
-	return $self->_compare_messages(map { $self->parser->parse($_) } $self->_get_files);
+	my $compared = $self->_compare_messages(map { $self->parser->parse($_) } $self->_get_files);
+	$self->_remove_matching($compared);
+
+	return $compared;
 }
 
 sub compare_stringify
@@ -189,5 +220,5 @@ sub compare_stringify
 
 1;
 
-# ABSTRACT: compare two HL7 messages against one another
+# ABSTRACT: compare two HL7 v2 messages against one another
 
