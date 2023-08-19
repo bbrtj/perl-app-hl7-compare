@@ -67,12 +67,12 @@ subtest 'should stringify a comparison' => sub {
 		"\n",
 		'PID.1[1][1][1]: y1 => (empty)',
 		'PID.1[1][1][2]: y2 => (empty)',
-		'PID.1[1][2]: (empty) => y3',
-		'PID.1[2]: (empty) => x',
-		'ORC.1[1]: 1 => 1',
-		'ORC.1[2]: ab => ab',
-		'ORC.2[1]: 2 => 2',
-		'ORC.2[2]: cc => cd',
+		'PID.1[1][2]:    (empty) => y3',
+		'PID.1[2]:       (empty) => x',
+		'ORC.1[1]:       1 => 1',
+		'ORC.1[2]:       ab => ab',
+		'ORC.2[1]:       2 => 2',
+		'ORC.2[2]:       cc => cd',
 	);
 };
 

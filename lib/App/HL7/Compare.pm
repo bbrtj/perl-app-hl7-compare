@@ -167,13 +167,21 @@ sub compare_stringify
 	my $compared = $self->compare;
 
 	my @out;
+	my $longest = 0;
 	foreach my $segment (@{$compared}) {
+		my @stringified;
 		foreach my $comp (@{$segment->{compared}}) {
-			push @out, sprintf "%s%s: %s => %s",
-				$segment->{segment},
-				join('', map { "[$_]" } @{$comp->{path}}),
-				map { defined $_ ? $_ : '(empty)' } @{$comp->{value}};
+			my $stringified = [
+				$segment->{segment} . join('', map { "[$_]" } @{$comp->{path}}) . ':',
+				map { defined $_ ? $_ : '(empty)' } @{$comp->{value}}
+			];
+
+			push @stringified, $stringified;
 		}
+
+		$longest = max $longest, map { length $_->[0] } @stringified;
+		my $blueprint = "%-${longest}s %s => %s";
+		push @out, map { sprintf $blueprint, @{$_} } @stringified;
 	}
 
 	return join "\n", @out;
