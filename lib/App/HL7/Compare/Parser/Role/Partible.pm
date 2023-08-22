@@ -48,9 +48,9 @@ sub split_and_build
 {
 	my ($self, $string_to_split, $class_to_build) = @_;
 
-	my @parts = map { $self->_trimmed($_) } split quotemeta($self->part_separator), $string_to_split;
+	my @parts = map { $self->_trimmed($_) } split quotemeta($self->part_separator), $string_to_split, -1;
 
-	App::HL7::Compare::Exception->raise("empty value for $class_to_build")
+	App::HL7::Compare::Exception->raise("empty value for $class_to_build in: <$string_to_split>")
 		if @parts == 0;
 
 	return [
