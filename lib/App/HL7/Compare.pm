@@ -123,14 +123,23 @@ sub _compare_messages
 		segments => [],
 	);
 
-	my $message_num = 0;
+	my @parts;
 	foreach my $message ($message1, $message2) {
-		my $parts = $self->_gather_recursive($message, 4);
-		foreach my $part (@{$parts}) {
+		push @parts, $self->_gather_recursive($message, 4);
+	}
+
+	while ('processing messages simultaneously') {
+		my $got_parts = 0;
+
+		foreach my $message_num (0 .. $#parts) {
+			my $part = shift @{$parts[$message_num]};
+			next unless defined $part;
+
+			$got_parts = 1;
 			$self->_compare_line(@{$part}, $message_num, \%comps);
 		}
 
-		$message_num += 1;
+		last unless $got_parts;
 	}
 
 	return $self->_build_comparison(\%comps);
