@@ -7,7 +7,7 @@ use warnings;
 use Moo;
 use Mooish::AttributeBuilder -standard;
 use App::HL7::Compare::Parser;
-use Types::Standard qw(Tuple Str ScalarRef InstanceOf Bool);
+use Types::Standard qw(Tuple Str ScalarRef InstanceOf Bool HashRef);
 use List::Util qw(max);
 
 has param 'files' => (
@@ -17,6 +17,11 @@ has param 'files' => (
 has param 'exclude_matching' => (
 	isa => Bool,
 	default => sub { 1 },
+);
+
+has param 'message_opts' => (
+	isa => HashRef,
+	default => sub { {} },
 );
 
 has field 'parser' => (
@@ -186,7 +191,9 @@ sub compare
 {
 	my ($self) = @_;
 
-	my $compared = $self->_compare_messages(map { $self->parser->parse($_) } $self->_get_files);
+	my $compared = $self->_compare_messages(map {
+		$self->parser->parse($_, %{$self->message_opts})
+		} $self->_get_files);
 	$self->_remove_matching($compared);
 
 	return $compared;
