@@ -200,9 +200,11 @@ sub compare
 {
 	my ($self) = @_;
 
-	my $compared = $self->_compare_messages(map {
-		$self->parser->parse($_, %{$self->message_opts})
-		} $self->_get_files);
+	my $compared = $self->_compare_messages(
+		map {
+			$self->parser->parse($_, %{$self->message_opts})
+		} $self->_get_files
+	);
 	$self->_remove_matching($compared);
 
 	return $compared;
